@@ -9,11 +9,11 @@ class Action:
 class Tag:
     __count: int = 0
 
-    def __init__(self, title: str, description: str):
+    def __init__(self, title: str, description: str, context: dict):
         self.__title = title
         self.__description = description
-        self.__tag_id = Tag.__count
-        Tag.__count += 1
+        self.__tag_id = context.get('tag_count', 0)
+        context['tag_count'] = self.__tag_id + 1
 
     @property
     def tag_id(self) -> int:

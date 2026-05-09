@@ -17,7 +17,8 @@ def tags_modified(old: Tag, new: Tag):
         last_notification = "error"
 
 
-tag = Tag("TestTag", "A tag to test something")
+ctx = dict()
+tag = Tag("TestTag", "A tag to test something", ctx)
 ts = TagSet()
 ts.add_listener(tags_modified)
 
@@ -42,7 +43,7 @@ def test_listener_removed():
 def test_tagset_iter():
     ts.clear()
 
-    ts.add(Tag("Tag 1", None))
-    ts.add(Tag("Tag 2", None))
+    ts.add(Tag("Tag 1", None, ctx))
+    ts.add(Tag("Tag 2", None, ctx))
     list_tags = [str(tag) for tag in ts]
     assert list_tags == ["Tag 1", "Tag 2"]
