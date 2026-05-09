@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Callable
 
 
 class Action:
@@ -52,13 +53,11 @@ class TagSet:
 
         else:
             self.__tags[str.lower(tag.title)] = tag
+            self.__notify_listeners(None, tag)
+
             return True
 
-    def add_listener(self, listener):
-        if not hasattr(listener, "tags_modified"):
-            raise AttributeError("Registering an instance that ist not a "
-                                 "modification listener.")
-
+    def add_listener(self, listener: Callable):
         self.__listeners.append(listener)
 
     def remove_listener(self, listener):
@@ -68,7 +67,12 @@ class TagSet:
         if tag not in self:
             return False
 
-        delattr(self, tag.title)
+        del self[tag.title]
+        self.__notify_listeners(tag, None)
+
+    def __notify_listeners(self, old, new):
+        for listener in self.__listeners:
+            listener(old, new)
 
     def __delitem__(self, tag: str | Tag):
         if isinstance(tag, Tag):
@@ -82,6 +86,9 @@ class TagSet:
 
     def __iter__(self):
         return iter(self.__tags.values())
+
+    def clear(self):
+        self.__tags.clear()
 
 
 class Storage:
